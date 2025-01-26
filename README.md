@@ -19,7 +19,9 @@ A lightweight Chrome extension that blocks intrusive pop-up ads on AsuraComic. T
     cd asuracomic-ad-blocker
     ```
 2. **Load the Extension in any Chromium-based Browser**
-   1. Open Chrome and go to `chrome://extensions/`
+   1. Open your browser of choice and go to **Extensions** 
+      1. Alternatively if you are using Google Chrome, you can go directly to `chrome://extensions/`
+      2. If you are using Microsoft Edege, you can go to `edge://extensions/`
    2. Enable **Developer mode** (toggle in the top right corner).
    3. Click **Load unpacked** and select the folder containing the extension files.
 3. **Test the Extension**
