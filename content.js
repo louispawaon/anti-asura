@@ -1,48 +1,75 @@
-function logMessage(message) {
-    const timestamp = new Date().toLocaleTimeString();
-    console.log(`[${timestamp}] ${message}`);
+// Store target selectors
+const MODAL_SELECTOR = '.fixed.inset-0.bg-gray-900.bg-opacity-75.flex.items-center.justify-center.z-50.p-4';
+const HEADER_SELECTOR = '.bg-gradient-to-br.from-indigo-900.via-purple-900.to-indigo-800.text-white.py-8.px-4.md\\:py-12.md\\:px-10.shadow-lg.relative.overflow-hidden';
+
+// Immediately inject blocking styles
+function injectBlockingStyles() {
+  const style = document.createElement('style');
+  style.textContent = `
+    ${MODAL_SELECTOR}, 
+    ${HEADER_SELECTOR} {
+      display: none !important;
+      visibility: hidden !important;
+      opacity: 0 !important;
+      pointer-events: none !important;
+    }
+  `;
+  
+  // Insert styles as early as possible
+  (document.head || document.documentElement).appendChild(style);
+}
+
+// Direct element removal function
+function removeModalElement() {
+  const modal = document.querySelector(MODAL_SELECTOR);
+  if (modal) {
+    modal.remove();
+    return true;
   }
-  
-  function removeElements() {
-    const elementsToRemove = [
-      {
-        selector: '.fixed.inset-0.bg-gray-900.bg-opacity-75.flex.items-center.justify-center.z-50.p-4',
-        name: 'Modal (Premium Upgrade Prompt)'
-      },
-      {
-        selector: '.bg-gradient-to-br.from-indigo-900.via-purple-900.to-indigo-800.text-white.py-8.px-4.md\\:py-12.md\\:px-10.shadow-lg.relative.overflow-hidden',
-        name: 'Header (Premium Benefits Section)'
-      }
-    ];
-  
-    elementsToRemove.forEach(({ selector, name }) => {
-      const element = document.querySelector(selector);
-      if (element) {
-        element.remove(); 
-        logMessage(`✅ Successfully removed: ${name}`);
-      } else {
-        logMessage(`⚠️ Element not found: ${name}`);
-      }
-    });
-  }
-  
+  return false;
+}
+
+// Performance-optimized observer
+function createObserver() {
+  let timeoutId = null;
   const observer = new MutationObserver((mutations) => {
-    mutations.forEach(mutation => {
-      if (mutation.type === 'childList' && mutation.addedNodes.length > 0) {
-        logMessage('🔄 Detected dynamic content changes. Checking for elements to remove...');
-        removeElements();
+    if (timeoutId) {
+      clearTimeout(timeoutId);
+    }
+    
+    timeoutId = setTimeout(() => {
+      if (removeModalElement()) {
+        observer.disconnect();
       }
+    }, 0);
+  });
+
+  return observer;
+}
+
+// Initialize everything
+function initialize() {
+  injectBlockingStyles();
+
+  if (!removeModalElement()) {
+    const observer = createObserver();
+    observer.observe(document.documentElement, {
+      childList: true,
+      subtree: true
     });
-  });
-  
-  observer.observe(document.body, { childList: true, subtree: true });
-  
-  document.addEventListener('DOMContentLoaded', () => {
-    logMessage('🚀 DOM fully loaded. Removing elements...');
-    removeElements();
-  });
-  
-  setTimeout(() => {
-    logMessage('⏳ Fallback: Checking for elements after delay...');
-    removeElements();
-  }, 3000); 
+    
+    setTimeout(() => {
+      observer.disconnect();
+    }, 5000);
+  }
+}
+
+// Run initialization as early as possible
+initialize();
+
+// Add a backup check when DOM is ready
+if (document.readyState === 'loading') {
+  document.addEventListener('DOMContentLoaded', initialize);
+} else {
+  initialize();
+}
