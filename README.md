@@ -1,3 +1,5 @@
+> This project will be archived for good (_for now_) I haven't really directed a great amount of effort to keep track of AsuraScans' website updates and upgrades. I basically just did this out of spite with (_at the time_) decision to plaster ads every chapter I go. If you see any value here feel free to do anything with this. Good luck!
+
 ![Anti-Asura](/icons/icon-128.png) 
 # **Anti-Asura**
 
